@@ -14,6 +14,3 @@ def to_date(date_str):
 
 def is_holiday(date_str):
     return date_str in holiday
-
-
-print(is_holiday('2015-01-04'))

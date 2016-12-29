@@ -1,5 +1,6 @@
 import datetime
 import time
+import data_normalization.date_util as date_util
 
 begin = datetime.date(1990, 3, 1)
 end = datetime.date(2000, 3, 31)
@@ -75,5 +76,6 @@ def write_returns(input, output, base_price):
 if __name__ == "__main__":
     # normalize_data("DJIA_history.csv", "djia.csv", "%m/%d/%Y", [])
     # normalize_data("NASDAQ_composite_history.csv", "nasdaq.csv", "%Y-%m-%d", [])
-    write_returns("djia.csv", "djia_return.csv", 2635.59)
-    write_returns("nasdaq.csv", "nasdaq_return.csv", 427.200012)
+    # write_returns("djia.csv", "djia_return.csv", 2635.59)
+    # write_returns("nasdaq.csv", "nasdaq_return.csv", 427.200012)
+    print(date_util.is_holiday("2015-01-01"))

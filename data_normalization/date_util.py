@@ -10,3 +10,10 @@ holiday = ['2015-01-01', '2015-01-02', '2015-01-03', '2015-02-18', '2015-02-19',
 def to_date(date_str):
     y, m, d = time.strptime(date_str, "%Y-%m-%d")[0:3]
     return datetime.date(y, m, d)
+
+
+def is_holiday(date_str):
+    return date_str in holiday
+
+
+print(is_holiday('2015-01-04'))

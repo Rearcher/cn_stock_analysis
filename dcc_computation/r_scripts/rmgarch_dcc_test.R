@@ -2,7 +2,7 @@ library(rmgarch)
 library(parallel)
 library(quantmod)
 
-setwd("/home/rahul/PycharmProjects/data_normalize")
+setwd("/home/rahul/PycharmProjects/data_normalization")
 
 dvar <- read.csv("output_new.csv")
 dvar <- dvar[, 1:101]

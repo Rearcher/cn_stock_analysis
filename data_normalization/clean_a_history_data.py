@@ -13,7 +13,7 @@ def normalize_single_file(input, output):
 
     input.readline()
     input.readline()
-    output.write(','.join(["date", "open", "high", "low", "close", "num", "money\n"]))
+    output.write(','.join(["date", "open", "high", "low", "close", "trading_volume", "transaction_volume\n"]))
     line = input.readline()
 
     prev_date = to_date(line.split('\t')[0]) - datetime.timedelta(days=1)

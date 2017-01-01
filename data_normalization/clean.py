@@ -1,6 +1,7 @@
 import datetime
 import time
-import data_normalization.date_util as date_util
+
+import utils.date_util as date_util
 
 begin = datetime.date(1990, 3, 1)
 end = datetime.date(2000, 3, 31)

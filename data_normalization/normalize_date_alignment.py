@@ -8,6 +8,7 @@
    When the number of fake data is too big, it means this stock may suspended for a while, excludes
    it or not is up to you.
 """
+import datetime
 import os
 from utils.date_util import to_date
 
@@ -66,6 +67,7 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
         cur_date = to_date(line_arr[0], '%Y-%m-%d')
 
         if cur_date < prev_date:
+            input_file.close()
             print('[ERROR] input file', input_filename, 'is invalid!')
             return
 
@@ -110,6 +112,20 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
 
     input_file.close()
 
+    # verify enough data
+    if len(output_arr) < ruler_size:
+        if ruler_size - len(output_arr) + fake_cnt > fake_limit:
+            print('[ERROR]', input_filename, "doesn't have enough data")
+            return
+        else:
+            while ruler_idx < ruler_size:
+                fake_line = prev_line.split(',')
+                fake_line[0] = str(date_ruler[ruler_idx])
+                output_arr.append(','.join(fake_line))
+                fake_cnt += 1
+                ruler_idx += 1
+
+
     # write aligned data
     output_file = open(output_filename, 'w')
     output_file.write(''.join(output_arr))
@@ -133,8 +149,8 @@ def align_all_file(input_directory, output_directory):
 
 def main():
     align_all_file('../data/normalized_data', '../data/aligned_data')
-    # date_ruler = get_date_ruler('2015-10-30', '2015-11-02')
-    # align_single_file('../data/normalized_data/600880.txt', 'test', date_ruler, 10000)
+    # date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
+    # align_single_file('../data/normalized_data/000007.txt', 'test', date_ruler, 10)
 
 
 if __name__ == '__main__':

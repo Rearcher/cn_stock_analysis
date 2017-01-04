@@ -8,7 +8,6 @@
    When the number of fake data is too big, it means this stock may suspended for a while, excludes
    it or not is up to you.
 """
-import datetime
 import os
 from utils.date_util import to_date
 

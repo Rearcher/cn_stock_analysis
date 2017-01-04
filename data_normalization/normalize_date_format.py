@@ -1,4 +1,4 @@
-"""Normalize data format.
+"""Normalize date format.
 
    Input raw data is in ../A_history_data directory
    Output directory is ../normalized_data
@@ -15,20 +15,20 @@ from utils.date_util import to_date
 
 
 def normalize_single_file(input_filename, output_filename):
-    input = open(input_filename, 'r')
-    output = open(output_filename, 'w')
+    f_input = open(input_filename, 'r')
+    f_output = open(output_filename, 'w')
 
     # skip first useless line
-    input.readline()
+    f_input.readline()
 
     # skip original header
-    input.readline()
+    f_input.readline()
 
     # write new header
-    output.write(','.join(['date', 'open', 'high', 'low', 'close', 'trading_volume', 'transaction_volume\n']))
+    f_output.write(','.join(['date', 'open', 'high', 'low', 'close', 'trading_volume', 'transaction_volume\n']))
 
     # real data begins
-    line = input.readline()
+    line = f_input.readline()
     while line:
         line = line.split('\t')
 
@@ -38,12 +38,12 @@ def normalize_single_file(input_filename, output_filename):
 
         # change date format
         line[0] = str(to_date(line[0], '%Y/%m/%d'))
-        output.write(','.join(line))
+        f_output.write(','.join(line))
 
-        line = input.readline()
+        line = f_input.readline()
 
-    input.close()
-    output.close()
+    f_input.close()
+    f_output.close()
 
 
 def normalize_all_file(input_directory, output_directory):
@@ -64,4 +64,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

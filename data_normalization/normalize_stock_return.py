@@ -77,7 +77,7 @@ def merge_all(input_directory, column_idx, output_filename):
         line = f_input.readline()
         while line:
             output_arr[idx] += ','
-            output_arr[idx] += str(float(line.split(',')[column_idx]))
+            output_arr[idx] += str(round(float(line.split(',')[column_idx]), 2))
             line = f_input.readline()
             idx += 1
 
@@ -91,7 +91,7 @@ def merge_all(input_directory, column_idx, output_filename):
 def main():
     log_config('../logs/return.log')
     # calc_all_file('../data/aligned_data', '../data/returned_data')
-    merge_all('../data/returned_data', 7, 'all.txt')
+    merge_all('../data/returned_data', 4, 'close_all.txt')
 
 if __name__ == '__main__':
     main()

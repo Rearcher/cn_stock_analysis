@@ -11,6 +11,7 @@
    5. change date format to %Y-%m-%d
 """
 import os
+from multiprocessing import Pool
 from utils.date_util import to_date
 
 
@@ -58,8 +59,25 @@ def normalize_all_file(input_directory, output_directory):
         cnt += 1
 
 
+def normalize_all_file_parallel(input_directory, output_directory):
+    files = os.listdir(input_directory)
+
+    p = Pool(4)
+    cnt = 1
+    for file in files:
+        input_filename = input_directory + '/' + file
+        output_filename = output_directory + '/' + file[2:]
+        print('processing', cnt, input_filename, '==>', output_filename)
+        p.apply(normalize_single_file, args=(input_filename, output_filename))
+        cnt += 1
+
+    p.close()
+    p.join()
+
+
 def main():
-    normalize_all_file('../data/A_history_data', '../data/normalized_data')
+    # normalize_all_file('../data/A_history_data', '../data/normalized_data')
+    normalize_all_file_parallel('../data/A_history_data', '../data/normalized_data')
 
 
 if __name__ == '__main__':

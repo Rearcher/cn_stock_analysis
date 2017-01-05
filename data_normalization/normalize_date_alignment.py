@@ -9,6 +9,7 @@
    it or not is up to you.
 """
 import os
+from multiprocessing import Pool
 from utils.date_util import to_date
 
 
@@ -26,10 +27,10 @@ def get_date_ruler(begin_date, end_date):
 
     all_date = date_input.read().split('\n')
     all_date = all_date[:len(all_date) - 1]
+    all_date = map(lambda date: to_date(date, d_format), all_date)
 
     result = []
     for date in all_date:
-        date = to_date(date, d_format)
         if date < begin_date:
             continue
         if date > end_date:
@@ -124,7 +125,6 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
                 fake_cnt += 1
                 ruler_idx += 1
 
-
     # write aligned data
     output_file = open(output_filename, 'w')
     output_file.write(''.join(output_arr))
@@ -146,8 +146,27 @@ def align_all_file(input_directory, output_directory):
         cnt += 1
 
 
+def align_all_file_parallel(input_directory, output_directory):
+    date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
+    files = os.listdir(input_directory)
+
+    cnt = 1
+    p = Pool(4)
+    for file in files:
+        input_filename = input_directory + '/' + file
+        output_filename = output_directory + '/' + file
+        print('processing', cnt, input_filename, '==>', output_filename)
+        p.apply(align_single_file, (input_filename, output_filename, date_ruler, 10))
+        cnt += 1
+
+    p.close()
+    p.join()
+
+
 def main():
-    align_all_file('../data/normalized_data', '../data/aligned_data')
+    # align_all_file('../data/normalized_data', '../data/aligned_data')
+    align_all_file_parallel('../data/normalized_data', '../data/aligned_data')
+
     # date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
     # align_single_file('../data/normalized_data/000007.txt', 'test', date_ruler, 10)
 

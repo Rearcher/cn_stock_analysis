@@ -12,35 +12,8 @@ import os
 import logging
 from multiprocessing import Pool
 from utils.date_util import to_date
+from utils.date_util import get_date_ruler
 from utils.log_util import log_config
-
-
-def get_date_ruler(begin_date, end_date):
-    """
-    get date ruler from begin_date to end_date, begin_date and end_date must be valid
-    :param begin_date: begin of date ruler
-    :param end_date: end of date ruler
-    :return: date ruler from begin_date to end_date
-    """
-    date_input = open('date_ruler', 'r')
-    d_format = '%Y-%m-%d'
-    begin_date = to_date(begin_date, d_format)
-    end_date = to_date(end_date, d_format)
-
-    all_date = date_input.read().split('\n')
-    all_date = all_date[:len(all_date) - 1]
-    all_date = map(lambda date: to_date(date, d_format), all_date)
-
-    result = []
-    for date in all_date:
-        if date < begin_date:
-            continue
-        if date > end_date:
-            break
-        result.append(date)
-
-    date_input.close()
-    return result
 
 
 def align_single_file(input_filename, output_filename, date_ruler, fake_limit):

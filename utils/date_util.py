@@ -16,6 +16,34 @@ def is_holiday(date_str):
     return date_str in holiday
 
 
+def get_date_ruler(begin_date, end_date):
+    """
+    get date ruler from begin_date to end_date, begin_date and end_date must be valid
+    :param begin_date: begin of date ruler
+    :param end_date: end of date ruler
+    :return: date ruler from begin_date to end_date
+    """
+    date_input = open('date_ruler', 'r')
+    d_format = '%Y-%m-%d'
+    begin_date = to_date(begin_date, d_format)
+    end_date = to_date(end_date, d_format)
+
+    all_date = date_input.read().split('\n')
+    all_date = all_date[:len(all_date) - 1]
+    all_date = map(lambda d: to_date(d, d_format), all_date)
+
+    result = []
+    for date in all_date:
+        if date < begin_date:
+            continue
+        if date > end_date:
+            break
+        result.append(date)
+
+    date_input.close()
+    return result
+
+
 def main():
     print(to_date('2010/09/10', '%Y/%m/%d'))
 

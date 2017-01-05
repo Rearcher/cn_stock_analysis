@@ -9,8 +9,10 @@
    it or not is up to you.
 """
 import os
+import logging
 from multiprocessing import Pool
 from utils.date_util import to_date
+from utils.log_util import log_config
 
 
 def get_date_ruler(begin_date, end_date):
@@ -68,7 +70,7 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
 
         if cur_date < prev_date:
             input_file.close()
-            print('[ERROR] input file', input_filename, 'is invalid!')
+            logging.error('input file ' + input_filename + ' is invalid!')
             return
 
         # skip data before begin date
@@ -96,7 +98,7 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
             # exceed fake limit, abandon this stock
             if fake_cnt > fake_limit:
                 input_file.close()
-                print(input_filename, 'exceeds fake limit', fake_limit)
+                logging.info(input_filename + ' exceeds fake limit ' + str(fake_limit))
                 return
 
             output_arr.append(line)
@@ -115,7 +117,7 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
     # verify enough data
     if len(output_arr) < ruler_size:
         if ruler_size - len(output_arr) + fake_cnt > fake_limit:
-            print('[ERROR]', input_filename, "doesn't have enough data")
+            logging.error(input_filename + " doesn't have enough data")
             return
         else:
             while ruler_idx < ruler_size:
@@ -130,7 +132,7 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
     output_file.write(''.join(output_arr))
     output_file.close()
 
-    print(input_filename, 'fake cnt =', fake_cnt)
+    logging.info(input_filename + ': fake cnt = ' + str(fake_cnt))
 
 
 def align_all_file(input_directory, output_directory):
@@ -141,7 +143,7 @@ def align_all_file(input_directory, output_directory):
     for file in files:
         input_filename = input_directory + '/' + file
         output_filename = output_directory + '/' + file
-        print('processing', cnt, input_filename, '==>', output_filename)
+        logging.info('processing ' + str(cnt) + ' ' + input_filename + ' ==> ' + output_filename)
         align_single_file(input_filename, output_filename, date_ruler, 10)
         cnt += 1
 
@@ -155,7 +157,7 @@ def align_all_file_parallel(input_directory, output_directory):
     for file in files:
         input_filename = input_directory + '/' + file
         output_filename = output_directory + '/' + file
-        print('processing', cnt, input_filename, '==>', output_filename)
+        logging.info('processing ' + str(cnt) + ' ' + input_filename + ' ==> ' + output_filename)
         p.apply(align_single_file, (input_filename, output_filename, date_ruler, 10))
         cnt += 1
 
@@ -164,6 +166,7 @@ def align_all_file_parallel(input_directory, output_directory):
 
 
 def main():
+    log_config('../logs/align.log')
     # align_all_file('../data/normalized_data', '../data/aligned_data')
     align_all_file_parallel('../data/normalized_data', '../data/aligned_data')
 

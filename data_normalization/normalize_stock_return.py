@@ -91,7 +91,8 @@ def merge_all(input_directory, column_idx, output_filename):
 def main():
     log_config('../logs/return.log')
     # calc_all_file('../data/aligned_data', '../data/returned_data')
-    merge_all('../data/returned_data', 4, 'close_all.txt')
+    merge_all('../data/returned_data', 7, '../data/return_all.txt')
+    merge_all('../data/returned_data', 4, '../data/close_all.txt')
 
 if __name__ == '__main__':
     main()

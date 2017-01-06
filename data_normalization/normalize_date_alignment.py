@@ -88,8 +88,8 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
     input_file.close()
 
     # verify enough data
-    if len(output_arr) < ruler_size:
-        if ruler_size - len(output_arr) + fake_cnt > fake_limit:
+    if len(output_arr) <= ruler_size:
+        if ruler_size - len(output_arr) + 1 + fake_cnt > fake_limit:
             logging.error(input_filename + " doesn't have enough data")
             return
         else:
@@ -144,7 +144,7 @@ def main():
     align_all_file_parallel('../data/normalized_data', '../data/aligned_data')
 
     # date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
-    # align_single_file('../data/normalized_data/000007.txt', 'test', date_ruler, 10)
+    # align_single_file('../data/normalized_data/601799.txt', 'test', date_ruler, 10)
 
 
 if __name__ == '__main__':

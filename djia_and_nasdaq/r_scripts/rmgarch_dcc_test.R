@@ -25,4 +25,4 @@ fit1 = dccfit(spec1, data = dvar, fit.control = list(eval.se = TRUE), fit = mult
 
 stopCluster(cl)
 
-write.csv(matrix(rcor(fit1), ncol=ncol(dvar) * ncol(dvar), byrow=T), file = "correlation.csv", row.names = F, quote = F)
+# write.csv(matrix(rcor(fit1), ncol=ncol(dvar) * ncol(dvar), byrow=T), file = "correlation.csv", row.names = F, quote = F)

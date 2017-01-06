@@ -61,10 +61,10 @@ def normalize_all_file(input_directory, output_directory):
         cnt += 1
 
 
-def normalize_all_file_parallel(input_directory, output_directory):
+def normalize_all_file_parallel(input_directory, output_directory, cores=4):
     files = os.listdir(input_directory)
 
-    p = Pool(4)
+    p = Pool(cores)
     cnt = 1
     for file in files:
         input_filename = input_directory + '/' + file

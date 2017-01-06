@@ -36,9 +36,9 @@ def calc_single_file(input_filename, output_filename):
     f_output.close()
 
 
-def calc_all_file(input_directory, output_directory):
+def calc_all_file(input_directory, output_directory, cores=4):
     files = os.listdir(input_directory)
-    p = Pool(4)
+    p = Pool(cores)
 
     cnt = 1
     for file in files:

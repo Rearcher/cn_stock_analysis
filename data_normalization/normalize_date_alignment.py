@@ -121,12 +121,12 @@ def align_all_file(input_directory, output_directory):
         cnt += 1
 
 
-def align_all_file_parallel(input_directory, output_directory):
-    date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
+def align_all_file_parallel(input_directory, output_directory, date_ruler, cores=4):
+
     files = os.listdir(input_directory)
 
     cnt = 1
-    p = Pool(4)
+    p = Pool(cores)
     for file in files:
         input_filename = input_directory + '/' + file
         output_filename = output_directory + '/' + file

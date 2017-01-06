@@ -1,4 +1,4 @@
-setwd('/home/rahul/Documents/Gits/cn_stock_analysis/data')
+setwd('/home/rahul/Documents/gits/cn_stock_analysis/data')
 library(xts)
 
 shanghai <- read.csv('000001.txt')

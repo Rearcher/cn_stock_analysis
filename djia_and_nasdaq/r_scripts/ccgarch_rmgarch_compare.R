@@ -1,6 +1,5 @@
 library(rmgarch)
 library(parallel)
-library(quantmod)
 library(xts)
 library(ccgarch)
 
@@ -23,9 +22,11 @@ plot(seq(1,nrow(data)), fit2$DCC[,2], "l")
 
 # A-share stock compre
 setwd("/home/rahul/Documents/gits/cn_stock_analysis/data")
-all_data <- read.csv("return_all.txt")
+all_data <- read.csv("close_all.txt")
 all_data <- xts(all_data[,-1], as.Date.factor(all_data[,1]))
-data <- all_data[, seq(0, 200)]
+return_data <- diff(all_data)[-1,]
+
+data <- return_data[, c(1, 2)]
 
 fit1 <- dcc_rmgarch(data)
 plot(fit1, which=4)

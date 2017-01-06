@@ -3,7 +3,7 @@ library(ccgarch)
 
 rm(list=ls())
 
-setwd("/home/rahul/Documents/DCC/")
+setwd("/home/rahul/Documents/gits/cn_stock_analysis/djia_and_nasdaq/data")
 
 nasdaq_data = read.csv("nasdaq_return.csv")
 djia_data = read.csv("djia_return.csv")

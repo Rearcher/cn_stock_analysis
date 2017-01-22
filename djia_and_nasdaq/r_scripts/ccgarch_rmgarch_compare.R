@@ -24,8 +24,9 @@ plot(seq(1,nrow(data)), fit2$DCC[,2], "l")
 # A-share stock compre
 setwd("/home/rahul/Documents/gits/cn_stock_analysis/data")
 all_data <- read.csv("return_all.txt")
+date <- all_data[,1]
 all_data <- xts(all_data[,-1], as.Date.factor(all_data[,1]))
-data <- all_data[, seq(0, 50)]
+data <- all_data[, seq(1, 2)]
 
 system.time(fit1 <- dcc_rmgarch(data))
 plot(fit1, which=4)

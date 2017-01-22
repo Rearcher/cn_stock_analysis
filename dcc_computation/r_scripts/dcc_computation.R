@@ -9,12 +9,12 @@ dcc_rmgarch <- function(data) {
   xspec = ugarchspec(mean.model = list(armaOrder = c(1, 1)), variance.model = list(garchOrder = c(1,1), model = 'sGARCH'), distribution.model = 'norm')
   uspec = multispec(replicate(ncol(data), xspec))
   spec1 = dccspec(uspec = uspec, dccOrder = c(1, 1), distribution = 'mvnorm')
-  #fit1 = dccfit(spec1, data, fit.control = list(eval.se = TRUE))
-  cl = makePSOCKcluster(2)
-  multf = multifit(uspec, data, cluster = cl)
-  fit1 = dccfit(spec1, data = data, fit.control = list(eval.se = TRUE), fit = multf, cluster = cl)
-  stopCluster(cl)
-  #plot(fit1, which=4)
+  fit1 = dccfit(spec1, data, fit.control = list(eval.se = TRUE))
+  #cl = makePSOCKcluster(2)
+  #multf = multifit(uspec, data, cluster = cl)
+  #fit1 = dccfit(spec1, data = data, fit.control = list(eval.se = TRUE), fit = multf, cluster = cl)
+  #stopCluster(cl)
+  plot(fit1, which=4)
   return(fit1)
 }
 

@@ -25,9 +25,9 @@ plot(seq(1,nrow(data)), fit2$DCC[,2], "l")
 setwd("/home/rahul/Documents/gits/cn_stock_analysis/data")
 all_data <- read.csv("return_all.txt")
 all_data <- xts(all_data[,-1], as.Date.factor(all_data[,1]))
-data <- all_data[, seq(0, 200)]
+data <- all_data[, seq(0, 50)]
 
-fit1 <- dcc_rmgarch(data)
+system.time(fit1 <- dcc_rmgarch(data))
 plot(fit1, which=4)
 fit2 <- dcc_ccgarch(data)
 plot(seq(1,nrow(data)), fit2$DCC[,2], "l")

@@ -121,7 +121,7 @@ def align_all_file(input_directory, output_directory):
         cnt += 1
 
 
-def align_all_file_parallel(input_directory, output_directory, date_ruler, cores=4):
+def align_all_file_parallel(input_directory, output_directory, date_ruler, cores=4, fake_limit=10):
 
     files = os.listdir(input_directory)
 
@@ -131,7 +131,7 @@ def align_all_file_parallel(input_directory, output_directory, date_ruler, cores
         input_filename = input_directory + '/' + file
         output_filename = output_directory + '/' + file
         logging.info('processing ' + str(cnt) + ' ' + input_filename + ' ==> ' + output_filename)
-        p.apply(align_single_file, (input_filename, output_filename, date_ruler, 10))
+        p.apply(align_single_file, (input_filename, output_filename, date_ruler, fake_limit))
         cnt += 1
 
     p.close()

@@ -1,6 +1,5 @@
 library(rmgarch)
 library(parallel)
-library(quantmod)
 library(xts)
 library(ccgarch)
 
@@ -22,11 +21,11 @@ plot(seq(1,nrow(data)), fit2$DCC[,2], "l")
 
 
 # A-share stock compre
-setwd("/home/rahul/Documents/gits/cn_stock_analysis/data")
+setwd("/home/rahul/tmp/data")
 all_data <- read.csv("return_all.txt")
 date <- all_data[,1]
 all_data <- xts(all_data[,-1], as.Date.factor(all_data[,1]))
-data <- all_data[, seq(1, 2)]
+data <- all_data[, seq(1, 30)]
 
 system.time(fit1 <- dcc_rmgarch(data))
 plot(fit1, which=4)
@@ -41,7 +40,7 @@ dcc_rmgarch <- function(data) {
   uspec = multispec(replicate(ncol(data), xspec))
   spec1 = dccspec(uspec = uspec, dccOrder = c(1, 1), distribution = 'mvnorm')
   # fit1 = dccfit(spec1, data = dvar, fit.control = list(eval.se = TRUE))
-  cl = makePSOCKcluster(2)
+  cl = makeCluster(2)
   multf = multifit(uspec, data, cluster = cl)
   fit1 = dccfit(spec1, data = data, fit.control = list(eval.se = TRUE), fit = multf, cluster = cl)
   stopCluster(cl)

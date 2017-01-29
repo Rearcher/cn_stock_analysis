@@ -16,6 +16,22 @@ dcc_rmgarch <- function(data) {
   return(fit1)
 }
 
+dcc_rmgarch_parallel <- function(data) {
+  # using rmgarch
+  xspec = ugarchspec(mean.model = list(armaOrder = c(1, 1)), variance.model = list(garchOrder = c(1,1), model = 'sGARCH'), distribution.model = 'norm')
+  uspec = multispec(replicate(ncol(data), xspec))
+  spec1 = dccspec(uspec = uspec, dccOrder = c(1, 1), distribution = 'mvnorm')
+  # fit1 = dccfit(spec1, data = dvar, fit.control = list(eval.se = TRUE))
+  cl = makeCluster(2)
+  multf = multifit(uspec, data, cluster = cl)
+  fit1 = dccfit(spec1, data = data, fit.control = list(eval.se = TRUE), fit = multf, cluster = cl)
+  stopCluster(cl)
+  
+  # plot(fit1, which=4)
+  
+  return(fit1)
+}
+
 dcc_compute <- function(file1, file2) {
   # begin <- proc.time()
   
@@ -93,14 +109,19 @@ main2 <- function() {
   clusterEvalQ(cl, library(rmgarch))
   registerDoParallel(cl)
   
-  for (i in 1:65) {
+  for (i in 3:20) {
     data1 <- read.csv(files[i])
     data1 <- xts(data1[,-1], as.Date.factor(data1[,1]))
     close1 <- data1[, 'close']
     series1 <- diff(log(close1))
     
-    foreach(j = (i + 1):files_size, .export = c("dcc_compute2", "dcc_rmgarch")) %dopar%
-      dcc_compute2(series1, files[i], files[j])
+    foreach(j = (i + 1):files_size, .export = c("dcc_compute2", "dcc_rmgarch")) %dopar% {
+      tryCatch({
+        dcc_compute2(series1, files[i], files[j])
+      }, error = function(e) { 
+        print(paste0("index: ", i, j, "error: ", e))
+      })
+    }
   }
   
   stopCluster(cl)

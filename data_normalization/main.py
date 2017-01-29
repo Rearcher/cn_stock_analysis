@@ -20,10 +20,10 @@ def main():
 
     # first step
     dir_1 = working_dir + 'normalized_data'
-    if os.path.exists(dir_1):
-        shutil.rmtree(dir_1)
-    os.mkdir(dir_1)
-    normalize_all_file_parallel(dir_0, dir_1, cores=8)
+    # if os.path.exists(dir_1):
+    #     shutil.rmtree(dir_1)
+    # os.mkdir(dir_1)
+    # normalize_all_file_parallel(dir_0, dir_1, cores=8)
 
     # second step
     dir_2 = working_dir + 'aligned_data'
@@ -31,7 +31,7 @@ def main():
         shutil.rmtree(dir_2)
     os.mkdir(dir_2)
     date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
-    align_all_file_parallel(dir_1, dir_2, date_ruler, cores=8, fake_limit=40)
+    align_all_file_parallel(dir_1, dir_2, date_ruler, cores=8, fake_limit=40, continuous_fake_limit=20)
 
 
 if __name__ == '__main__':

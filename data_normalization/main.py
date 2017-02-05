@@ -15,15 +15,15 @@ from utils.log_util import log_config
 
 def main():
     log_config('../logs/all.log')
-    working_dir = '/home/rahul/tmp/data/'
+    working_dir = '/Users/rahul/tmp/data/'
     dir_0 = working_dir + 'A_history_data'
 
     # first step
     dir_1 = working_dir + 'normalized_data'
-    # if os.path.exists(dir_1):
-    #     shutil.rmtree(dir_1)
-    # os.mkdir(dir_1)
-    # normalize_all_file_parallel(dir_0, dir_1, cores=8)
+    if os.path.exists(dir_1):
+        shutil.rmtree(dir_1)
+    os.mkdir(dir_1)
+    normalize_all_file_parallel(dir_0, dir_1, cores=8)
 
     # second step
     dir_2 = working_dir + 'aligned_data'

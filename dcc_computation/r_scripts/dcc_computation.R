@@ -1,4 +1,4 @@
-setwd('/home/rahul/tmp/data/aligned_data')
+setwd('/Users/rahul/tmp/data/aligned_data')
 
 library(rmgarch)
 library(parallel)
@@ -109,7 +109,10 @@ main2 <- function() {
   clusterEvalQ(cl, library(rmgarch))
   registerDoParallel(cl)
   
-  for (i in 3:20) {
+  for (i in 1:2) {
+    
+    print(paste0("processing i=", i, " stock number: ", files[i]))
+    
     data1 <- read.csv(files[i])
     data1 <- xts(data1[,-1], as.Date.factor(data1[,1]))
     close1 <- data1[, 'close']
@@ -119,7 +122,7 @@ main2 <- function() {
       tryCatch({
         dcc_compute2(series1, files[i], files[j])
       }, error = function(e) { 
-        print(paste0("index: ", i, j, "error: ", e))
+        print(paste0("index: i=", i, " j=", j, " error: ", e))
       })
     }
   }

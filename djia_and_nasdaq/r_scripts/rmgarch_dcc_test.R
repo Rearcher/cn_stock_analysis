@@ -1,6 +1,5 @@
 library(rmgarch)
 library(parallel)
-library(quantmod)
 library(xts)
 
 setwd("/home/rahul/Documents/gits/cn_stock_analysis/djia_and_nasdaq/data")

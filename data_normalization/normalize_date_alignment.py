@@ -7,8 +7,6 @@
    If one stock doesn't have data on some date in date_ruler, add fake data using previous data.
    When the number of fake data is too big, it means this stock may suspended for a while, excludes
    it or not is up to you.
-
-   Update: If one stock stops for some continuous days, filter it.
 """
 import os
 import logging
@@ -18,7 +16,7 @@ from utils.date_util import get_date_ruler
 from utils.log_util import log_config
 
 
-def align_single_file(input_filename, output_filename, date_ruler, fake_limit, continuous_fake_limit):
+def align_single_file(input_filename, output_filename, date_ruler, fake_limit):
     input_file = open(input_filename, 'r')
     output_arr = []
 
@@ -34,10 +32,6 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit, c
 
     # fake data count
     fake_cnt = 0
-
-    # last status, 0 means real data, 1 means fake data
-    last_status = 0
-    continuous_cnt = 0
 
     line = input_file.readline()
     prev_line = line
@@ -65,18 +59,9 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit, c
 
         # exist real data
         if cur_date == date_ruler[ruler_idx]:
-            if (continuous_cnt > continuous_fake_limit):
-                logging.error('input file ' + input_filename + ' has exceeded continuous fake limit')
-                return
-            last_status = 0
-            continuous_cnt = 0
             output_arr.append(line)
         # miss real data
         elif cur_date > date_ruler[ruler_idx]:
-            last_status = 1
-            if (last_status == 1):
-                continuous_cnt += 1
-
             while date_ruler[ruler_idx] < cur_date:
                 fake_line = prev_line.split(',')
                 fake_line[0] = str(date_ruler[ruler_idx])
@@ -108,14 +93,6 @@ def align_single_file(input_filename, output_filename, date_ruler, fake_limit, c
             logging.error(input_filename + " doesn't have enough data")
             return
         else:
-            if (last_status == 0):
-                continuous_cnt = ruler_size - len(output_arr) + 1
-            else:
-                continuous_cnt += ruler_size - len(output_arr) + 1
-
-            if (continuous_cnt > continuous_fake_limit):
-                logging.error('input file ' + input_filename + ' has exceeded continuous fake limit')
-                return
             while ruler_idx < ruler_size:
                 fake_line = prev_line.split(',')
                 fake_line[0] = str(date_ruler[ruler_idx])
@@ -144,7 +121,7 @@ def align_all_file(input_directory, output_directory):
         cnt += 1
 
 
-def align_all_file_parallel(input_directory, output_directory, date_ruler, cores=4, fake_limit=10, continuous_fake_limit = 20):
+def align_all_file_parallel(input_directory, output_directory, date_ruler, cores=4, fake_limit=10):
 
     files = os.listdir(input_directory)
 
@@ -154,7 +131,7 @@ def align_all_file_parallel(input_directory, output_directory, date_ruler, cores
         input_filename = input_directory + '/' + file
         output_filename = output_directory + '/' + file
         logging.info('processing ' + str(cnt) + ' ' + input_filename + ' ==> ' + output_filename)
-        p.apply(align_single_file, (input_filename, output_filename, date_ruler, fake_limit, continuous_fake_limit))
+        p.apply(align_single_file, (input_filename, output_filename, date_ruler, fake_limit))
         cnt += 1
 
     p.close()

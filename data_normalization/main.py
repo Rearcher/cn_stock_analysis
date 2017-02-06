@@ -31,7 +31,7 @@ def main():
         shutil.rmtree(dir_2)
     os.mkdir(dir_2)
     date_ruler = get_date_ruler('2015-01-05', '2015-11-02')
-    align_all_file_parallel(dir_1, dir_2, date_ruler, cores=8, fake_limit=40, continuous_fake_limit=20)
+    align_all_file_parallel(dir_1, dir_2, date_ruler, cores=8, fake_limit=40)
 
 
 if __name__ == '__main__':

@@ -1,8 +1,9 @@
 library(rmgarch)
 library(parallel)
+library(quantmod)
 library(xts)
 
-setwd("/Users/rahul/Documents/gits/cn_stock_analysis/djia_and_nasdaq/data")
+setwd("/home/rahul/Documents/gits/cn_stock_analysis/djia_and_nasdaq/data")
 
 djia <- read.csv("djia_return.csv")
 nasdaq <- read.csv("nasdaq_return.csv")

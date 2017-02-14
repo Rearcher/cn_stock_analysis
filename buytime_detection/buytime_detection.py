@@ -4,10 +4,9 @@ import os
 from multiprocessing import Pool
 
 from utils import date_util
-from utils import log_util
 
 
-def analysis_single(input_file, filter):
+def analysis_single(input_file, filter, idx):
     dates, trades, buytime = [], [], []
     trade_min, trade_max = 0, 0
 
@@ -23,9 +22,14 @@ def analysis_single(input_file, filter):
             current_date = date_util.to_date(row[0], '%Y-%m-%d')
             if current_date < date_util.to_date('2015-07-01', '%Y-%m-%d'):
                 continue
+            elif current_date > date_util.to_date('2015-10-01', '%Y-%m-%d'):
+                break
 
             # handle trade max & trade min
-            current_trade = int(row[5])
+            if idx == 5:
+                current_trade = int(row[5])
+            else:
+                current_trade = float(row[6])
             if trade_min == 0 and trade_max == 0:
                 trade_min, trade_max = current_trade, current_trade
             else:
@@ -46,35 +50,43 @@ def analysis_single(input_file, filter):
         while right_bound + 1 < trade_len and trades[right_bound + 1] < trades[right_bound]:
             right_bound += 1
 
-        if left_bound < i and right_bound > i \
+        if left_bound < i < right_bound \
                 and max(trades[i] - trades[left_bound], trades[i] - trades[right_bound]) >= trade_gap * filter \
                 and date_util.to_date(dates[i], '%Y-%m-%d') > date_util.to_date('2015-07-01', '%Y-%m-%d'):
             buytime.append(dates[i])
             trade_sum += trades[i]
 
-    result = input_file + ' ' + str(len(buytime))
+    # result = input_file + ' ' + str(len(buytime))
+    result = input_file[len(input_file)-10:len(input_file)-4]
     for time in buytime:
         result += ' ' + time
     return result
 
 
-def analysis_all(input_dir, filter):
+def analysis_all(input_dir, filter, idx):
     pool = Pool(4)
     input_files = os.listdir(input_dir)
     for input_file in input_files:
         if input_file.index('.') == 0:
             print('invalid input file', input_file)
             continue
-        pool.apply_async(analysis_single, args=(input_dir + input_file, filter), callback=logging.info)
+        pool.apply_async(analysis_single, args=(input_dir + input_file, filter, idx), callback=logging.info)
     pool.close()
     pool.join()
 
 
 def main():
-    log_util.log_config('../logs/buytime.log')
+    # log_util.log_config('../logs/buytime.log')
+    logging.basicConfig(level=logging.INFO, format='%(message)s', filename='../logs/buytime_2.log', filemode='w')
+    console_log_handler = logging.StreamHandler()
+    console_log_handler.setLevel(logging.INFO)
+    console_log_handler.setFormatter(logging.Formatter('%(message)s'))
+    logging.getLogger().addHandler(console_log_handler)
+
     data_dir = '/Users/rahul/tmp/data/aligned_data/'
-    analysis_all(data_dir, 0.3)
-    # analysis_single(data_dir + '000001.txt', filter=0.1)
+    analysis_all(data_dir, filter=0.3, idx=6)
+    # res = analysis_single(data_dir + '000001.txt', filter=0.1, idx=6)
+    # print(res)
     pass
 
 

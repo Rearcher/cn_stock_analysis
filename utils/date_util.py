@@ -7,7 +7,7 @@ holiday = ['2015-01-01', '2015-01-02', '2015-01-03', '2015-02-18', '2015-02-19',
            '2015-09-04', '2015-10-01', '2015-10-02', '2015-10-05', '2015-10-06', '2015-10-07']
 
 
-def to_date(date_str, date_format):
+def to_date(date_str, date_format='%Y-%m-%d'):
     y, m, d = time.strptime(date_str, date_format)[0:3]
     return datetime.date(y, m, d)
 

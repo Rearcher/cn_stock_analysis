@@ -49,7 +49,7 @@ def detect_one_stock(input_file, filter):
             buy_time.append((dates[i], trade_num[i], trade_money[i]))
 
     result = input_file[len(input_file)-10:len(input_file)-4]
-    for i in range(1, len(buy_time)):
+    for i in range(0, len(buy_time)):
         result += ' ' + buy_time[i][0] + ' ' + str(buy_time[i][1]) + ' ' + str(buy_time[i][2])
     return result
 

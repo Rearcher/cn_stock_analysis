@@ -59,8 +59,8 @@ def stats():
     prop = fm.FontProperties(fname=f)
 
     ind, width = np.arange(N), 0.35
-    p1 = plt.bar(ind, blue_trade_money, width, color='blue', label='blue')
-    p2 = plt.bar(ind, simple_trade_money, width, color='red', bottom=blue_trade_money, label='simple')
+    p1 = plt.bar(ind, blue_cnt, width, color='blue', label='blue')
+    p2 = plt.bar(ind, simple_cnt, width, color='red', bottom=blue_cnt, label='simple')
 
 
     plt.ylabel('交易额', fontproperties=prop)

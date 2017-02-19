@@ -23,7 +23,7 @@ def get_date_ruler(begin_date, end_date):
     :param end_date: end of date ruler
     :return: date ruler from begin_date to end_date
     """
-    date_input = open('date_ruler', 'r')
+    date_input = open('../resources/date_ruler', 'r')
     d_format = '%Y-%m-%d'
     begin_date = to_date(begin_date, d_format)
     end_date = to_date(end_date, d_format)

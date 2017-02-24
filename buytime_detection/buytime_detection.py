@@ -67,9 +67,15 @@ def detect_all_stock(input_dir, filter):
         if input_file.index('.') == 0:
             print('invalid input file ', input_file)
             continue
+        # if input_file[:6] not in valid_stock:
+        if not input_file[:6].startswith('60'):
+            print('invalid input file ', input_file)
+            continue
+
         if input_file[:6] not in valid_stock:
             print('invalid input file ', input_file)
             continue
+
         pool.apply_async(detect_one_stock, args=(input_dir + input_file, filter), callback=logging.info)
     pool.close()
     pool.join()

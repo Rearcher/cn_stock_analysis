@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
+
 def stats():
 
     # key = date
@@ -61,12 +62,14 @@ def stats():
     ind, width = np.arange(N), 0.35
     p1 = plt.bar(ind, blue_cnt, width, color='blue', label='blue')
     p2 = plt.bar(ind, simple_cnt, width, color='red', bottom=blue_cnt, label='simple')
+    # p1 = plt.bar(ind, blue_trade_money, width, color='blue', label='blue')
+    # p2 = plt.bar(ind, simple_trade_money, width, color='red', bottom=blue_cnt, label='simple')
 
 
-    plt.ylabel('交易额', fontproperties=prop)
-    plt.title('交易额统计', fontproperties=prop)
-    # plt.ylabel('股票数', fontproperties=prop)
-    # plt.title('股票买入数统计', fontproperties=prop)
+    # plt.ylabel('交易额', fontproperties=prop)
+    # plt.title('交易额统计', fontproperties=prop)
+    plt.ylabel('股票数', fontproperties=prop)
+    plt.title('股票买入数统计', fontproperties=prop)
     plt.xticks(ind, x_name, rotation='vertical')
     # plt.legend((p1[0], p2[0]), ('蓝筹股', '中小股'))
     plt.legend()

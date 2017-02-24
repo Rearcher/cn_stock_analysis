@@ -1,4 +1,4 @@
-setwd('/home/rahul/tmp/data/aligned_data')
+setwd('/Users/rahul/tmp/data/aligned_data')
 
 library(rmgarch)
 library(parallel)

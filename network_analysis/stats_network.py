@@ -1,16 +1,17 @@
 import collections
+import csv
 import logging
 import multiprocessing
+import os
 
+import community
+import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
 
 from utils.date_util import get_date_ruler
 from utils.log_util import log_config
-
-import numpy as np
-import matplotlib.font_manager as fm
-import matplotlib.pyplot as plt
-import community
 
 
 def get_weight_avg_and_node_strength(semaphore, map, filename, date):
@@ -130,29 +131,136 @@ def community_analysis():
         if G[u][v]['weight'] < threshold:
             G.remove_edge(u, v)
 
-    nx.write_gml(G, '/Users/rahul/tmp/2015-07-28.0.9.gml')
+    # nx.write_gml(G, '/Users/rahul/tmp/2015-07-28.0.9.gml')
+    partition = community.best_partition(G)
+    community_cnt = {}
 
-    # partition = community.best_partition(G)
-    # community_cnt = {}
-    #
-    # for k, v in partition.items():
-    #     if v in community_cnt.keys():
-    #         community_cnt[v].append(k)
-    #     else:
-    #         community_cnt[v] = [k]
-    #
-    # for k, v in community_cnt.items():
-    #     print(k, len(v))
-    #
-    # sample = ['600051', '601798', '600016', '601398']
-    # for stock in sample:
-    #     for k, v in community_cnt.items():
-    #         if stock in v:
-    #             print(stock, k)
-    #
-    # print(community_cnt[1])
+    for k, v in partition.items():
+        if v in community_cnt.keys():
+            community_cnt[v].append(k)
+        else:
+            community_cnt[v] = [k]
 
-    pass
+    for k, v in community_cnt.items():
+        print(k, len(v))
+
+    sample = ['600051', '601798', '600016', '601398']
+    for stock in sample:
+        for k, v in community_cnt.items():
+            if stock in v:
+                print(stock, k)
+
+    print(community_cnt[1])
+
+
+def trending_analysis():
+    data_dir = '/Users/rahul/tmp/data/aligned_data/'
+    trading_map, transaction_map = {}, {}
+    stocks = os.listdir(data_dir)
+    date_ruler = list(map(str, get_date_ruler('2015-01-05', '2015-11-02')))
+
+    begin_date, end_date = '2015-07-01', '2015-09-30'
+    begin_idx, end_idx = date_ruler.index(begin_date), date_ruler.index(end_date)
+
+    # print(begin_idx, end_idx)
+    # print(date_ruler[begin_idx], date_ruler[end_idx])
+
+    for i in range(begin_idx, end_idx + 1):
+        trading_map[date_ruler[i]] = []
+        transaction_map[date_ruler[i]] = []
+
+    for stock in stocks:
+        if not stock.startswith('60'):
+            continue
+
+        with open(data_dir + stock, 'r') as f:
+            csv_reader = csv.DictReader(f)
+            trading = [row['trading_volume'] for row in csv_reader]
+
+            f.seek(0)
+            csv_reader = csv.DictReader(f)
+            transaction = [row['transaction_volume'] for row in csv_reader]
+
+            for i in range(begin_idx, end_idx + 1):
+                trading_map[date_ruler[i]].append(int(trading[i]))
+                transaction_map[date_ruler[i]].append(float(transaction[i]))
+
+    trading, transaction, weight_avg, sample_strength, date = [], [], [], [], []
+
+    # get everyday's trading volume
+    for k, v in trading_map.items():
+        trading.append(sum(v))
+
+    # get everyday's transaction volume
+    for k, v in transaction_map.items():
+        transaction.append(sum(v))
+
+    # get everyday's average weight
+    with open('/Users/rahul/tmp/weight_avg.txt', 'r') as f:
+        csv_reader = csv.DictReader(f, delimiter=' ')
+        weight_avg = [row['weight_avg'] for row in csv_reader]
+
+        f.seek(0)
+        csv_reader = csv.DictReader(f, delimiter=' ')
+        date = [row['date'] for row in csv_reader]
+
+        weight_avg = weight_avg[date.index(begin_date):(date.index(end_date) + 1)]
+
+    # get stock 600051's everyday's strength
+    with open('/Users/rahul/tmp/600051_strength.txt', 'r') as f:
+        csv_reader = csv.DictReader(f, delimiter=' ')
+        sample_strength = [row['strength'] for row in csv_reader]
+
+        f.seek(0)
+        csv_reader = csv.DictReader(f, delimiter=' ')
+        date = [row['date'] for row in csv_reader]
+
+        sample_strength = sample_strength[date.index(begin_date):(date.index(end_date) + 1)]
+
+    # get date
+    date = date[date.index(begin_date):(date.index(end_date) + 1)]
+    date = list(map(lambda x:x[5:], date))
+
+    ind = np.arange(len(date))
+    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    prop = fm.FontProperties(fname=f)
+
+    plt.figure(1)
+    plt.subplot(411)
+    plt.plot(ind, sample_strength)
+    plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    plt.ylabel('节点600051的强度', fontproperties=prop)
+    plt.grid(True)
+    plt.annotate('第一次救市', xy=(14, 600), fontproperties=prop)
+    plt.annotate('第二次救市', xy=(48, 600), fontproperties=prop)
+    plt.axvspan(xmin=date.index('07-06'), xmax=date.index('08-14'), color='green', alpha=0.2)
+    plt.axvspan(xmin=date.index('08-26'), xmax=date.index('09-25'), color='green', alpha=0.2)
+
+    plt.subplot(412)
+    plt.plot(ind, weight_avg)
+    plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    plt.ylabel('网络平均相关性', fontproperties=prop)
+    plt.grid(True)
+    plt.axvspan(xmin=date.index('07-06'), xmax=date.index('08-14'), color='green', alpha=0.2)
+    plt.axvspan(xmin=date.index('08-26'), xmax=date.index('09-25'), color='green', alpha=0.2)
+
+    plt.subplot(413)
+    plt.plot(ind, transaction, color='red')
+    plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    plt.ylabel('交易额', fontproperties=prop)
+    plt.grid(True)
+    plt.axvspan(xmin=date.index('07-06'), xmax=date.index('08-14'), color='green', alpha=0.2)
+    plt.axvspan(xmin=date.index('08-26'), xmax=date.index('09-25'), color='green', alpha=0.2)
+
+    plt.subplot(414)
+    plt.plot(ind, trading, color='red')
+    plt.xticks(ind, date, rotation='vertical')
+    plt.ylabel('交易量', fontproperties=prop)
+    plt.axvspan(xmin=date.index('07-06'), xmax=date.index('08-14'), color='green', alpha=0.2)
+    plt.axvspan(xmin=date.index('08-26'), xmax=date.index('09-25'), color='green', alpha=0.2)
+    plt.grid(True)
+
+    plt.show()
 
 
 def main():
@@ -160,7 +268,8 @@ def main():
     # save_weight_avg_and_node_strength()
     # show_weight_avg()
     # show_node_strength()
-    community_analysis()
+    # community_analysis()
+    trending_analysis()
     pass
 
 

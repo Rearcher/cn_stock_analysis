@@ -119,54 +119,100 @@ def show_node_strength():
             out.write(str(date_ruler[i]) + ' ' + str(strength_map[stock_num][i]) + '\n')
 
 
-def community_analysis():
-    data_dir = '/Users/rahul/tmp/data/graph_data/'
-    filename = data_dir + 'shanghai_2015-07-28.gml'
+def get_community_info(date):
+    """
+    :return: {
+                cnt: [],
+                cnt_percent: [],
+                community_0.5: {},
+                community_0.6: {},
+                community_0.7: {},
+                community_0.8: {},
+                community_0.9: {}
+             }
+    """
+    result = {}
 
-    cnt_5, cnt_6, cnt_7, cnt_8, cnt_9, cnt_1_0 = 0, 0, 0, 0, 0, 0
+    data_dir = '/Users/rahul/tmp/data/graph_data/'
+    filename = data_dir + 'shanghai_' + date + '.gml'
+
+    cnt = [0, 0, 0, 0, 0, 0]
     G = nx.read_gml(filename)
 
-    print(nx.is_directed(G))
-
-    threshold = 0.9
+    threshold = 0.5
     for (u, v) in G.edges():
+        weight = G[u][v]['weight']
+        if weight <= 0.5:
+            cnt[0] += 1
+        elif weight <= 0.6:
+            cnt[1] += 1
+        elif weight <= 0.7:
+            cnt[2] += 1
+        elif weight <= 0.8:
+            cnt[3] += 1
+        elif weight <= 0.9:
+            cnt[4] += 1
+        elif weight <= 1:
+            cnt[5] += 1
 
-        if G[u][v]['weight'] <= 0.5:
-            cnt_5 += 1
-        elif G[u][v]['weight'] <= 0.6:
-            cnt_6 += 1
-        elif G[u][v]['weight'] <= 0.7:
-            cnt_7 += 1
-        elif G[u][v]['weight'] <= 0.8:
-            cnt_8 += 1
-        elif G[u][v]['weight'] <= 0.9:
-            cnt_9 += 1
-        elif G[u][v]['weight'] <= 1:
-            cnt_1_0 += 1
+    cnt_percent = list(map(lambda x: x / len(G.edges()), cnt))
 
-        # if G[u][v]['weight'] < threshold:
-        #     G.remove_edge(u, v)
+    result['cnt'] = cnt
+    result['cnt_percent'] = cnt_percent
+
+    while threshold < 1:
+        for (u, v) in G.edges():
+            if G[u][v]['weight'] < threshold:
+                G.remove_edge(u, v)
+
+        for k, v in G.degree(G.nodes()).items():
+            if v == 0:
+                G.remove_node(k)
+
+        nx.write_gml(G, '/Users/rahul/tmp/data/' + date + '_' + str(round(threshold, 1)) + '.gml')
+
+        partition = community.best_partition(G)
+        community_cnt = {}
+
+        for k, v in partition.items():
+            if v in community_cnt.keys():
+                community_cnt[v].append(k)
+            else:
+                community_cnt[v] = [k]
+
+        # print('threshold = ' + str(threshold))
+        # for k, v in community_cnt.items():
+        #     print(k, len(v))
+
+        result['community_' + str(round(threshold, 1))] = community_cnt
+        threshold += 0.1
+
+    return result
 
 
-    print('<= 0.5:', cnt_5, str(cnt_5 / len(G.edges())))
-    print('<= 0.6:', cnt_6, str(cnt_6 / len(G.edges())))
-    print('<= 0.7:', cnt_7, str(cnt_7 / len(G.edges())))
-    print('<= 0.8:', cnt_8, str(cnt_8 / len(G.edges())))
-    print('<= 0.9:', cnt_9, str(cnt_9 / len(G.edges())))
-    print('<= 1.0:', cnt_1_0, str(cnt_1_0 / len(G.edges())))
+def community_analysis():
+    # date1, date2 = '2015-08-24', '2015-08-25'
+    # date1, date2 = '2015-08-18', '2015-08-19'
+    date1, date2 = '2015-07-27', '2015-07-28'
+    info1, info2 = get_community_info(date1), get_community_info(date2)
+    print(info1)
+    print(info2)
 
-    # nx.write_gml(G, '/Users/rahul/tmp/2015-07-28.0.9.gml')
-    partition = community.best_partition(G)
-    community_cnt = {}
-
-    for k, v in partition.items():
-        if v in community_cnt.keys():
-            community_cnt[v].append(k)
-        else:
-            community_cnt[v] = [k]
-
-    for k, v in community_cnt.items():
-        print(k, len(v))
+    # threshold = 0.5
+    # while threshold < 1:
+    #     key = 'community_' + str(round(threshold, 2))
+    #     v1, v2 = info1[key], info2[key]
+    #     for i in range(4):
+    #         print(len(v1[i]), len(v2[i]), len(set(v1[i]).intersection(set(v2[i]))))
+    #     threshold += 0.1
+    # G1 = nx.read_gml('/Users/rahul/tmp/data/graph_data/shanghai_2015-07-27.gml')
+    # G2 = nx.read_gml('/Users/rahul/tmp/data/graph_data/shanghai_2015-07-28.gml')
+    # cnt = 0
+    # for (u, v) in G1.edges():
+    #     if G1[u][v]['weight'] < G2[u][v]['weight']:
+    #         cnt += 1
+    # print(cnt, str(cnt / len(G1.edges())))
+    pass
 
 
 def get_network_avg_strength(begin_date, end_date):
@@ -186,8 +232,6 @@ def get_network_avg_strength(begin_date, end_date):
 
 
 def trending_analysis():
-
-
     data_dir = '/Users/rahul/tmp/data/aligned_data/'
     trading_map, transaction_map = {}, {}
     stocks = os.listdir(data_dir)
@@ -250,22 +294,18 @@ def trending_analysis():
 
     # get date
     date = date[date.index(begin_date):(date.index(end_date) + 1)]
-    date = list(map(lambda x:x[5:], date))
+    date = list(map(lambda x: x[5:], date))
 
-    print((np.corrcoef(sample_strength, avg_strength))[0][1])
-    print((np.corrcoef(trading, transaction))[0][1])
-
-    print((np.corrcoef(sample_strength, transaction))[0][1])
-    print((np.corrcoef(sample_strength, trading))[0][1])
-
-    print((np.corrcoef(avg_strength, transaction))[0][1])
-    print((np.corrcoef(avg_strength, trading))[0][1])
+    print(np.corrcoef([avg_strength, sample_strength], [trading, transaction]))
+    print(np.corrcoef([np.diff(avg_strength), np.diff(sample_strength)], [np.diff(trading), np.diff(transaction)]))
+    print(np.corrcoef([np.diff(avg_strength, 2), np.diff(sample_strength, 2)], [np.diff(trading, 2), np.diff(transaction, 2)]))
 
     # save all
     with open('/Users/rahul/tmp/trending.txt', 'w') as f:
         f.write(' '.join(['date', 'weight_avg', '600051_weight', 'trading', 'transaction']) + '\n')
         for i in range(len(date)):
-            f.write(' '.join([date[i], str(avg_strength[i]), str(sample_strength[i]), str(trading[i]), str(transaction[i])]) + '\n')
+            f.write(' '.join(
+                [date[i], str(avg_strength[i]), str(sample_strength[i]), str(trading[i]), str(transaction[i])]) + '\n')
 
     ind = np.arange(len(date))
     f = '/System/Library/Fonts/STHeiti Medium.ttc'
@@ -312,6 +352,35 @@ def trending_analysis():
     plt.show()
 
 
+def show_sample_close():
+    filename = '/Users/rahul/tmp/data/aligned_data/600051.txt'
+    with open(filename, 'r') as f:
+        csv_reader = csv.DictReader(f)
+        date = [row['date'] for row in csv_reader]
+
+        f.seek(0)
+        csv_reader = csv.DictReader(f)
+        close = [row['close'] for row in csv_reader]
+
+    begin_date, end_date = '2015-07-01', '2015-09-30'
+    begin_idx = date.index(begin_date)
+    end_idx = date.index(end_date) + 1
+
+    date = date[begin_idx:end_idx]
+    close = close[begin_idx:end_idx]
+
+    ind = np.arange(len(date))
+    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    prop = fm.FontProperties(fname=f)
+
+    plt.plot(ind, close)
+    plt.xticks(ind, date, rotation='vertical')
+    plt.grid(True)
+    plt.ylabel('股价', fontproperties=prop)
+
+    plt.show()
+
+
 def main():
     log_config('../logs/stat_network.txt')
     # save_weight_avg_and_node_strength()
@@ -319,6 +388,7 @@ def main():
     # show_node_strength()
     # community_analysis()
     trending_analysis()
+    # show_sample_close()
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ import os
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 import numpy as np
+import buy_time_detection.buy_time_core
 
 
 def simple_line_plot(date_ruler, ts):
@@ -87,42 +88,8 @@ def plot_trades(stock_num, begin_date, end_date):
 
 
 def buytime_summary():
-    data_dir = '/Users/rahul/tmp/data/aligned_data/'
-    files = os.listdir(data_dir)
-
-    begin_date, end_date = '2015-07-01', '2015-09-30'
-    stock_number_summary, stock_money_summary = {}, {}
-    valid_stock = get_valid_stock()
-
-    for file in files:
-        if file.startswith('.'):
-            continue
-        if file[:6] not in valid_stock:
-            continue
-        if file.startswith('300') or file.startswith('002'):
-            continue
-        filename = data_dir + file
-        date_ruler, trading_volume, transaction_volume, close = get_ts(filename, begin_date, end_date)
-        buytime = buytime_finder(date_ruler, trading_volume)
-
-        for (idx, time) in buytime:
-            if time in stock_number_summary.keys():
-                stock_number_summary[time].append(file[:6])
-                stock_money_summary[time] += transaction_volume[idx]
-            else:
-                stock_number_summary[time] = [file[:6]]
-                stock_money_summary[time] = transaction_volume[idx]
-
-    stock_number_summary = collections.OrderedDict(sorted(stock_number_summary.items()))
-    stock_money_summary = collections.OrderedDict(sorted(stock_money_summary.items()))
-
-    x, y1, y2 = [], [], []
-    for k, v in stock_number_summary.items():
-        x.append(k)
-        y1.append(len(v))
-
-    for k, v in stock_money_summary.items():
-        y2.append(v)
+    x, y1, y2 = buy_time_detection.buy_time_core.get_buy_summary()
+    y3, y4 = buy_time_detection.buy_time_core.get_price_change_by_time(lag=0)
 
     ind = np.arange(len(x))
     f = '/System/Library/Fonts/STHeiti Medium.ttc'
@@ -145,7 +112,7 @@ def buytime_summary():
     plt.grid(True)
 
     plt.subplot(313)
-    plt.plot(ind, buytime_with_price(), color='green')
+    plt.plot(ind, y3, color='green')
     plt.xticks(ind, x, rotation='vertical')
     plt.ylabel('买入当天股价上升的股票数百分比', fontproperties=prop)
     plt.grid(True)

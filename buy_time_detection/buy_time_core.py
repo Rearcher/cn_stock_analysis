@@ -404,6 +404,65 @@ def show():
     plt.show()
 
 
+def show_percent():
+
+    def get_data(file):
+        with open(file, 'r') as f:
+            raw_data = f.readlines()
+            raw_data = map(lambda x:float(x.split(' ')[1]), raw_data)
+
+        y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        for data in raw_data:
+            if data > 0 and data <= 0.1:
+                y[0] += 1
+            elif data > 0.1 and data <= 0.2:
+                y[1] += 1
+            elif data > 0.2 and data <= 0.3:
+                y[2] += 1
+            elif data > 0.3 and data <= 0.4:
+                y[3] += 1
+            elif data > 0.4 and data <= 0.5:
+                y[4] += 1
+            elif data > 0.5 and data <= 0.6:
+                y[5] += 1
+            elif data > 0.6 and data <= 0.7:
+                y[6] += 1
+            elif data > 0.7 and data <= 0.8:
+                y[7] += 1
+            elif data > 0.8 and data <= 0.9:
+                y[8] += 1
+            elif data > 0.9 and data <= 1:
+                y[9] += 1
+
+        return y
+
+    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    prop = fm.FontProperties(fname=f)
+    y1, y2 = get_data('../resources/price_raise_percent'), get_data('../resources/price_drop_percent_after')
+    y3, y4 = get_data('../resources/volatility_drop_percent'), get_data('../resources/volatility_raise_percent_after')
+    x = np.arange(0, 1, 0.1)
+    plt.figure(1)
+    plt.suptitle('股价以及波动性变化分布', fontproperties=prop, fontsize=16)
+
+    plt.subplot(221)
+    plt.title('买入当天股价上升百分比分布', fontproperties=prop, fontsize=12)
+    plt.plot(x, y1, linewidth=2)
+
+    plt.subplot(222)
+    plt.title('买入之后第二天股价下降百分比分布', fontproperties=prop, fontsize=12)
+    plt.plot(x, y2, linewidth=2)
+
+    plt.subplot(223)
+    plt.title('买入当天波动性下降百分比分布', fontproperties=prop, fontsize=12)
+    plt.plot(x, y3, linewidth=2)
+
+    plt.subplot(224)
+    plt.title('买入之后第二天波动性上升百分比分布', fontproperties=prop, fontsize=12)
+    plt.plot(x, y4, linewidth=2)
+
+    plt.show()
+
+
 def main():
     # date, buy_number, buy_money = get_buy_summary()
     # print(np.corrcoef(buy_number, buy_money))
@@ -414,7 +473,8 @@ def main():
     # get_price_change_by_stock()
     # get_volatility_change_by_stock()
     # get_buy_summary()
-    after_buy_time_analysis()
+    # after_buy_time_analysis()
+    show_percent()
     pass
 
 

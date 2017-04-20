@@ -88,6 +88,8 @@ def get_buy_summary():
 
     stock_number_summary = collections.OrderedDict(sorted(stock_number_summary.items()))
     stock_money_summary = collections.OrderedDict(sorted(stock_money_summary.items()))
+    stock_to_time_map = collections.OrderedDict(sorted(stock_to_time_map.items()))
+    time_to_stock_map = collections.OrderedDict(sorted(time_to_stock_map.items()))
 
     x, y1, y2 = [], [], []
     for k, v in stock_number_summary.items():
@@ -472,9 +474,9 @@ def main():
     # show()
     # get_price_change_by_stock()
     # get_volatility_change_by_stock()
-    # get_buy_summary()
+    get_buy_summary()
     # after_buy_time_analysis()
-    show_percent()
+    # show_percent()
     pass
 
 

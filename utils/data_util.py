@@ -14,17 +14,17 @@ def read_data(data_dir, file, begin_date, end_date):
     return returns[begin_index:end_index+1]
 
 
-def read_raw_data(data_dir, file, begin_date, end_date, columns):
+def read_raw_data(data_dir, file, begin_date, end_date, columns, delimiter=','):
     filename, returns = ''.join([data_dir, file]), []
 
     with open(filename, 'r') as f:
-        csv_reader = csv.DictReader(f)
+        csv_reader = csv.DictReader(f, delimiter=delimiter)
         date = [row['date'] for row in csv_reader]
         begin_index, end_index = date.index(begin_date), date.index(end_date)
 
         for column in columns:
             f.seek(0)
-            csv_reader = csv.DictReader(f)
+            csv_reader = csv.DictReader(f, delimiter=delimiter)
             returns.append([float(row[column]) for row in csv_reader][begin_index:end_index+1])
 
     return date[begin_index:end_index+1], returns

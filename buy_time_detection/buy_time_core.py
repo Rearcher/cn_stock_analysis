@@ -107,7 +107,7 @@ def get_buy_summary():
         for k, v in time_to_stock_map.items():
             f.write(k + ' ' + ' '.join(v) + '\n')
 
-    return x, y1, y2
+    return x, y1, y2, stock_number_summary
 
 
 def get_price_change_by_time(lag=0):
@@ -373,7 +373,7 @@ def show():
     展示环节
     :return: null
     """
-    x, y1, y2 = get_buy_summary()
+    x, y1, y2, _ = get_buy_summary()
     y3, y4 = get_price_change_by_time(lag=0)
     y5, y6 = get_volatility_change_by_time(lag=0)
 
@@ -387,8 +387,8 @@ def show():
 
     plt.subplot(111)
     plt.plot(ind, y1, label='买入当天买入的股票数')
-    plt.plot(ind, y3, color='red', label='买入当天买入的股票中股价上升的股票数')
-    plt.plot(ind, y5, color='green', label='买入当天买入的股票中波动性下降的股票数')
+    plt.plot(ind, y3, label='买入当天买入的股票中股价上升的股票数')
+    plt.plot(ind, y5, label='买入当天买入的股票中波动性下降的股票数')
     plt.xticks(ind, x, rotation='vertical')
     plt.ylabel('股票数', fontproperties=prop)
     plt.grid(True)
@@ -404,6 +404,43 @@ def show():
     print(np.corrcoef(y1, y5))
     print(np.corrcoef(y3, y5))
     plt.show()
+
+
+def show_buy_number():
+    x, _1, _2, m = get_buy_summary()
+    y1, y2 = [], []
+    s1, s2 = set(), set()
+    for k, v in m.items():
+        tmp = [0, 0]
+        for code in v:
+            if code.startswith('000'):
+                tmp[0] += 1
+            elif code.startswith('60'):
+                tmp[1] += 1
+
+            if k <= '2015-08-20':
+                s1.add(code)
+            else:
+                s2.add(code)
+
+        y1.append(tmp[0])
+        y2.append(tmp[1])
+
+    # ind = np.arange(len(x))
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    # prop = fm.FontProperties(fname=f)
+    # x = list(map(lambda x: x[5:], x))
+    #
+    # fig = plt.figure(1)
+    # plt.bar(ind, y2, label='上交所股票')
+    # plt.bar(ind, y1, label='深交所股票', bottom=y2)
+    # plt.legend(prop=prop, loc='upper right')
+    # plt.xticks(ind, x, rotation='vertical')
+    # plt.xlabel('买入日期', fontproperties=prop)
+    # plt.ylabel('买入股票数', fontproperties=prop)
+    # plt.show()
+
+    print(len(s1), len(s2))
 
 
 def show_percent():
@@ -471,12 +508,13 @@ def main():
     #
     # x, price_change = get_price_change_by_time(lag=0)
     # print(np.corrcoef([buy_number, buy_money], [x, price_change]))
-    # show()
+    show()
     # get_price_change_by_stock()
     # get_volatility_change_by_stock()
-    get_buy_summary()
+    # get_buy_summary()
     # after_buy_time_analysis()
     # show_percent()
+    # show_buy_number()
     pass
 
 

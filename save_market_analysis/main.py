@@ -1,8 +1,11 @@
 import collections
+import csv
+
+import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 
 from utils.data_util import read_data
 from utils.data_util import read_raw_data
-import csv
 
 
 def get_index_data(index_number):
@@ -77,8 +80,9 @@ def get_classification_list(stock, classification_type):
     """
     根据股票列表，以及对应的股票分类依据，确定该股票列表中有哪些分类
     classification_type可以是industry/area/concept/hs300s
-    :param date: 
-    :return: 
+    :param stock: 
+    :param classification_type:
+    :return: 一个map(股票分类 --> 对应的股票列表)
     """
     classification_file = '/Users/rahul/tmp/classification/' + classification_type + '.csv'
 
@@ -97,38 +101,71 @@ def get_classification_list(stock, classification_type):
             if code in stocks:
                 key = types[stocks.index(code)]
                 if key in res.keys():
-                    res[key] += 1
+                    res[key].append(code)
                 else:
-                    res[key] = 1
+                    res[key] = [code]
     else:
-        res = {'in':0, 'out':0}
+        res = {'in': [], 'out': []}
         for code in stock:
             if code in stocks:
-                res['in'] += 1
+                res['in'].append(code)
             else:
-                res['out'] += 1
-    res = collections.OrderedDict(sorted(res.items(), key=lambda x:x[1], reverse=True))
+                res['out'].append(code)
+    res = collections.OrderedDict(sorted(res.items(), key=lambda x: len(x[1]), reverse=True))
     return res
 
 
+def get_driven_stock(stock):
+    """
+    根据某个股票列表，输出由该列表包含的股票带动的股票列表
+    :param stock: 
+    :return: 
+    """
+    pass
+
+
 def main():
-    index_number = '000016'
+    index_number = '000001'
     date_1 = get_price_raise_date(index_number)
     date_2 = get_vol_decrease_date(index_number)
     date_3 = [val for val in date_1 if val in date_2]
 
-    type = 'hs300s'
-    print('date1===')
-    for date in date_1:
-        print(date, get_classification_list(get_buy_stock_by_date(date), type))
-
-    print('date2===')
-    for date in date_2:
-        print(date, get_classification_list(get_buy_stock_by_date(date), type))
-
-    print('date3===')
+    print(date_3)
+    type = 'concept'
+    result = {}
     for date in date_3:
-        print(date, get_classification_list(get_buy_stock_by_date(date), type))
+        current_map = get_classification_list(get_buy_stock_by_date(date), type)
+        for k, v in current_map.items():
+            if k in result.keys():
+                for code in v:
+                    result[k].append(code)
+            else:
+                result[k] = v
+
+    result = collections.OrderedDict(sorted(result.items(), key=lambda x: len(x[1]), reverse=True))
+    labels, values = [], []
+    for k, v in result.items():
+        if (len(labels) < 12):
+            labels.append(k)
+            values.append(len(v))
+        elif (len(labels) == 12):
+            labels.append('其他')
+            values.append(len(v))
+        else:
+            values[len(values)-1] += len(v)
+
+    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    prop = fm.FontProperties(fname=f)
+
+    fig1, ax1 = plt.subplots()
+    pie = plt.pie(values, labels=labels, startangle=90, autopct='%1.1f%%')
+    # pie = ax1.pie(values, labels=labels, autopct='%1.1f%%',
+    #         shadow=False, startangle=90)
+    for font in pie[1]:
+        font.set_fontproperties(prop)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    plt.show()
 
 
 if __name__ == '__main__':

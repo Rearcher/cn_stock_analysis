@@ -426,11 +426,11 @@ def show_buy_number():
         y1.append(tmp[0])
         y2.append(tmp[1])
 
-    # ind = np.arange(len(x))
-    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
-    # prop = fm.FontProperties(fname=f)
-    # x = list(map(lambda x: x[5:], x))
-    #
+    ind = np.arange(len(x))
+    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    prop = fm.FontProperties(fname=f)
+    x = list(map(lambda x: x[5:], x))
+
     # fig = plt.figure(1)
     # plt.bar(ind, y2, label='上交所股票')
     # plt.bar(ind, y1, label='深交所股票', bottom=y2)
@@ -439,8 +439,10 @@ def show_buy_number():
     # plt.xlabel('买入日期', fontproperties=prop)
     # plt.ylabel('买入股票数', fontproperties=prop)
     # plt.show()
+    # print(len(s1), len(s2))
 
-    print(len(s1), len(s2))
+    for i in range(0, len(x)):
+        print(x[i], y1[i], y2[i])
 
 
 def show_percent():
@@ -508,13 +510,13 @@ def main():
     #
     # x, price_change = get_price_change_by_time(lag=0)
     # print(np.corrcoef([buy_number, buy_money], [x, price_change]))
-    show()
+    # show()
     # get_price_change_by_stock()
     # get_volatility_change_by_stock()
     # get_buy_summary()
     # after_buy_time_analysis()
     # show_percent()
-    # show_buy_number()
+    show_buy_number()
     pass
 
 

@@ -124,8 +124,34 @@ def get_driven_stock(stock):
     pass
 
 
+def draw_pie(result):
+    labels, values = [], []
+    for k, v in result.items():
+        if (len(labels) < 12):
+            labels.append(k)
+            values.append(len(v))
+        elif (len(labels) == 12):
+            labels.append('其他')
+            values.append(len(v))
+        else:
+            values[len(values) - 1] += len(v)
+
+    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    prop = fm.FontProperties(fname=f)
+
+    fig1, ax1 = plt.subplots()
+    pie = plt.pie(values, labels=labels, startangle=90, autopct='%1.1f%%')
+    # pie = ax1.pie(values, labels=labels, autopct='%1.1f%%',
+    #         shadow=False, startangle=90)
+    for font in pie[1]:
+        font.set_fontproperties(prop)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    plt.show()
+
+
 def main():
-    index_number = '000001'
+    index_number = '399300'
     date_1 = get_price_raise_date(index_number)
     date_2 = get_vol_decrease_date(index_number)
     date_3 = [val for val in date_1 if val in date_2]
@@ -143,29 +169,7 @@ def main():
                 result[k] = v
 
     result = collections.OrderedDict(sorted(result.items(), key=lambda x: len(x[1]), reverse=True))
-    labels, values = [], []
-    for k, v in result.items():
-        if (len(labels) < 12):
-            labels.append(k)
-            values.append(len(v))
-        elif (len(labels) == 12):
-            labels.append('其他')
-            values.append(len(v))
-        else:
-            values[len(values)-1] += len(v)
-
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
-    prop = fm.FontProperties(fname=f)
-
-    fig1, ax1 = plt.subplots()
-    pie = plt.pie(values, labels=labels, startangle=90, autopct='%1.1f%%')
-    # pie = ax1.pie(values, labels=labels, autopct='%1.1f%%',
-    #         shadow=False, startangle=90)
-    for font in pie[1]:
-        font.set_fontproperties(prop)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-    plt.show()
+    draw_pie(result)
 
 
 if __name__ == '__main__':

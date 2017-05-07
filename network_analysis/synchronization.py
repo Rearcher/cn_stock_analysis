@@ -65,9 +65,17 @@ def show_synchronization():
     plt.show()
 
 
+def sync_vol_cor():
+    begin_date, end_date = '2015-01-06', '2015-11-02'
+    y1 = read_data(data_dir='../resources/', file='synchronization.txt', begin_date=begin_date, end_date=end_date)
+    y2 = read_data(data_dir='/Users/rahul/tmp/index_data/volatility/', file='000001', begin_date=begin_date, end_date=end_date)
+    print(np.corrcoef(y1, y2))
+
+
 def main():
     # save_synchronization()
-    show_synchronization()
+    # show_synchronization()
+    sync_vol_cor()
 
 
 if __name__ == '__main__':

@@ -152,12 +152,13 @@ def community_analysis(data_dir):
         community_member.append(list(data_map.values())[0])
 
 
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
     prop = fm.FontProperties(fname=f)
     x = list(map(lambda x: str(x)[5:], date_ruler))
-    # for i in range(0, len(x)):
-    #     if i % 5 != 0:
-    #         x[i] = ''
+    for i in range(0, len(x)):
+        if i % 5 != 0:
+            x[i] = ''
 
     plt.figure(1)
     plt.subplot(211)
@@ -169,7 +170,8 @@ def community_analysis(data_dir):
     plt.plot(np.arange(0, len(community_member_cnt)), community_member_cnt, color='red')
     plt.ylabel('最大社团成员数', fontproperties=prop)
     plt.xlabel('日期', fontproperties=prop)
-    plt.xticks(np.arange(0, len(date_ruler)), x, rotation='vertical', fontsize=5)
+
+    plt.xticks(np.arange(0, len(date_ruler)), x, rotation='vertical')
     # plt.grid(True)
     plt.show()
     #
@@ -270,7 +272,7 @@ def community_component_analysis():
 
 
 def community_component_analysis_2():
-    begin_date, end_date = '2015-09-10', '2015-09-30'
+    begin_date, end_date = '2015-07-06', '2015-09-30'
     date_ruler = get_date_ruler(begin_date, end_date)
 
     y1, y2 = [], []
@@ -289,16 +291,17 @@ def community_component_analysis_2():
     print(np.corrcoef(y3, y4))
 
     # f = '/System/Library/Fonts/STHeiti Medium.ttc'
-    # prop = fm.FontProperties(fname=f)
-    # ind = np.arange(0, len(date_ruler))
-    # plt.figure()
-    #
-    # plt.plot(ind, y1)
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
+    prop = fm.FontProperties(fname=f)
+    ind = np.arange(0, len(date_ruler))
+    plt.figure()
+
+    plt.plot(ind, y1)
     # plt.grid(True)
-    # plt.xticks(ind, list(map(lambda x: str(x)[5:], date_ruler)), rotation='vertical')
-    # plt.xlabel('日期', fontproperties=prop)
-    # plt.ylabel('非调控对象所占比例', fontproperties=prop)
-    # plt.show()
+    plt.xticks(ind, list(map(lambda x: str(x)[5:], date_ruler)), rotation='vertical')
+    plt.xlabel('日期', fontproperties=prop)
+    plt.ylabel('非调控对象所占比例', fontproperties=prop)
+    plt.show()
 
     pass
 
@@ -325,16 +328,16 @@ def main():
     c2 = list(bc_map.keys())
     c3 = [val for val in c1 if val in c2]
 
-    classification_list = get_classification_list(c3, classification_type='area')
+    classification_list = get_classification_list(c3, classification_type='industry')
     for k, v in classification_list.items():
         print(k, v, '\n')
     print(c3)
-    # draw_pie(classification_list)
+    draw_pie(classification_list)
 
 
 if __name__ == '__main__':
     # print(len(get_buy_stock()))
-    # main()
-    community_analysis('/Users/rahul/tmp/data/0_9/partition/')
+    main()
+    # community_analysis('/Users/rahul/tmp/data/0_9/partition/')
     # special_analysis()
     # community_component_analysis_2()

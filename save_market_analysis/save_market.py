@@ -136,8 +136,9 @@ def draw_pie(result):
         else:
             values[len(values) - 1] += len(v)
 
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
-    prop = fm.FontProperties(fname=f)
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
+    prop = fm.FontProperties(fname=f, size=20)
 
     fig1, ax1 = plt.subplots()
     pie = plt.pie(values, labels=labels, startangle=90, autopct='%1.1f%%')
@@ -157,7 +158,7 @@ def main():
     date_3 = [val for val in date_1 if val in date_2]
 
     print(date_3)
-    type = 'concept'
+    type = 'area'
     result = {}
     for date in date_3:
         current_map = get_classification_list(get_buy_stock_by_date(date), type)

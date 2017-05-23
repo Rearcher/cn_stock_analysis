@@ -83,7 +83,8 @@ def show():
         series[0].append(sum(map(float, v[0:7])))
         series[1].append(sum(map(float, v[7:])))
 
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
     prop = fm.FontProperties(fname=f)
 
     plt.figure()

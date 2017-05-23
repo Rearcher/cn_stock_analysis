@@ -378,7 +378,8 @@ def show():
     y5, y6 = get_volatility_change_by_time(lag=0)
 
     ind = np.arange(len(x))
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
     prop = fm.FontProperties(fname=f)
     x = list(map(lambda x: x[5:], x))
 
@@ -427,22 +428,23 @@ def show_buy_number():
         y2.append(tmp[1])
 
     ind = np.arange(len(x))
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
     prop = fm.FontProperties(fname=f)
     x = list(map(lambda x: x[5:], x))
 
-    # fig = plt.figure(1)
-    # plt.bar(ind, y2, label='上交所股票')
-    # plt.bar(ind, y1, label='深交所股票', bottom=y2)
-    # plt.legend(prop=prop, loc='upper right')
-    # plt.xticks(ind, x, rotation='vertical')
-    # plt.xlabel('买入日期', fontproperties=prop)
-    # plt.ylabel('买入股票数', fontproperties=prop)
-    # plt.show()
+    fig = plt.figure(1)
+    plt.bar(ind, y2, label='上交所股票')
+    plt.bar(ind, y1, label='深交所股票', bottom=y2)
+    plt.legend(prop=prop, loc='upper right')
+    plt.xticks(ind, x, rotation='vertical')
+    plt.xlabel('买入日期', fontproperties=prop)
+    plt.ylabel('买入股票数', fontproperties=prop)
+    plt.show()
     # print(len(s1), len(s2))
-
-    for i in range(0, len(x)):
-        print(x[i], y1[i], y2[i])
+    #
+    # for i in range(0, len(x)):
+    #     print(x[i], y1[i], y2[i])
 
 
 def show_percent():
@@ -516,7 +518,8 @@ def main():
     # get_buy_summary()
     # after_buy_time_analysis()
     # show_percent()
-    show_buy_number()
+    # show_buy_number()
+    show()
     pass
 
 

@@ -49,19 +49,24 @@ def show_synchronization():
     y = read_data(data_dir='../resources/', file='synchronization.txt', begin_date=begin_date, end_date=end_date)
     x = list(map(lambda x: str(x)[5:], get_date_ruler(begin_date=begin_date, end_date=end_date)))
 
-    s, t = x.index('01-06'), x.index('11-02')
+    s, t = x.index('07-01'), x.index('09-30')
 
     ind = np.arange(len(x[s:(t+1)]))
-    f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    # f = '/System/Library/Fonts/STHeiti Medium.ttc'
+    f = '/Users/rahul/Library/Fonts/simsun.ttf'
     prop = fm.FontProperties(fname=f)
 
     plt.plot(ind, y[s:(t+1)])
     plt.xlabel('日期', fontproperties=prop)
     plt.ylabel('网络同步性', fontproperties=prop)
-    plt.axvspan(xmin=x.index('06-15'), xmax=x.index('07-06'), color='red', alpha=0.2)
-    plt.axvspan(xmin=x.index('07-06'), xmax=x.index('09-30'), alpha=0.2)
-    plt.annotate('救市期', xy=(300, 500), fontproperties=prop)
-    plt.xticks(ind, x[s:(t+1)], rotation='vertical', fontsize=5)
+    # plt.axvspan(xmin=x.index('06-15'), xmax=x.index('07-06'), color='red', alpha=0.2)
+    # plt.axvspan(xmin=x.index('07-06'), xmax=x.index('09-30'), alpha=0.2)
+    # plt.annotate('救市期', xy=(300, 500), fontproperties=prop)
+    # for i in range(0, len(x)):
+    #     if (i+1) % 5 != 0:
+    #         x[i] = ''
+    plt.grid(True)
+    plt.xticks(ind, x[s:(t+1)], rotation='vertical')
     plt.show()
 
 
@@ -74,8 +79,8 @@ def sync_vol_cor():
 
 def main():
     # save_synchronization()
-    # show_synchronization()
-    sync_vol_cor()
+    show_synchronization()
+    # sync_vol_cor()
 
 
 if __name__ == '__main__':
